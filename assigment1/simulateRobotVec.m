@@ -1,4 +1,4 @@
-function [ positions_state, thetas_state, pos_gps, thetas_mag ] = simulateRobotVec(w1, w2, w3, dT)
+function [ positions_state, thetas_state, pos_gps, thetas_mag ] = simulateRobotVec(w1, w2, w3, dT, noise)
 
 r = 0.25;
 l = 0.3;
@@ -48,25 +48,33 @@ for index = 1:numel(w1)
   %
   % Calculate the rotation. 
   theta = theta + w(3) * dT;
-  theta = normrnd(theta,(0.1*pi/180));
-
+  if noise
+    theta = normrnd(theta,(0.1*pi/180));
+  end
   %   
   % Add noise to the motion.
-  position(1) = normrnd(position(1),0.01);
-  position(2) = normrnd(position(2),0.01);
+  if noise
+    position(1) = normrnd(position(1),0.01);
+    position(2) = normrnd(position(2),0.01);
+  end
   %
   % Generate the measurements. 
-  pos_meas(1) = normrnd(position(1),0.5);
-  pos_meas(2) = normrnd(position(2),0.5);
-  thetas_meas = normrnd(theta + 99.7 * pi / 180.0,10 * pi / 180);
- 
+  if noise
+    pos_meas(1) = normrnd(position(1),0.5);
+    pos_meas(2) = normrnd(position(2),0.5);
+    thetas_meas = normrnd(theta + 9.7 * pi / 180.0,10 * pi / 180);
+  else
+    pos_meas(1) = normrnd(position(1),0.0);
+    pos_meas(2) = normrnd(position(2),0.0);
+    thetas_meas = normrnd(theta + 9.7 * pi / 180.0, 0.0);
+  end
+  
   positions_state = [positions_state; position'];
   thetas_state = [thetas_state; theta];
   pos_gps = [pos_gps; pos_meas'];
   thetas_mag = [thetas_mag; thetas_meas];
   
 end
-
 
 end
 
