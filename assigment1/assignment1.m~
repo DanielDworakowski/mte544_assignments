@@ -5,7 +5,7 @@ close all;
 T = 15;
 dt = 0.1;
 %% Question 1
-% a) Going Straight
+%% a) Going Straight
 w1 = -1 * ones(T / dt, 1);
 w2 = 1 * ones(T / dt, 1);
 w3 = 0 * ones(T / dt, 1);
@@ -19,7 +19,7 @@ subplot(2,1,2)       % add second plot in 2 x 1 grid
 plot(theta);
 title('Question 1 a) Theta State')
 
-% b) Turning in Place
+%% b) Turning in Place
 w1 = 0.1 * ones(T / dt, 1);
 w2 = 0.1 * ones(T / dt, 1);
 w3 = 0.1 * ones(T / dt, 1);
@@ -33,7 +33,7 @@ subplot(2,1,2)       % add second plot in 2 x 1 grid
 plot(theta);
 title('Question 1 b) Theta State')
 %% Question 2
-% a) w = -1.5 , 2.0 , 1.0
+%% a) w = -1.5 , 2.0 , 1.0
 w1 = -1.5 * ones(T / dt, 1);
 w2 = 2.0 * ones(T / dt, 1);
 w3 = 1.0 * ones(T / dt, 1);
@@ -47,7 +47,7 @@ subplot(2,1,2)       % add second plot in 2 x 1 grid
 plot(theta);
 title('Question 2 a) Theta State')
 
-% b) Going Straight
+%% b) Going Straight
 w1 = -1.0 * ones(T / dt, 1);
 w2 = 1.0 * ones(T / dt, 1);
 w3 = 0.0 * ones(T / dt, 1);
@@ -61,13 +61,13 @@ subplot(2,1,2)       % add second plot in 2 x 1 grid
 plot(theta);
 title('Question 2 b) Theta State')
 
-% c) 2m Diameter Circle
+%% c) 2m Diameter Circle
 w1 = 1 * ones(T / dt, 1);
 % w2 = 0.9478 / 0.25 * ones(T / dt, 1);
 % w3 = -0.1978 / 0.25 * ones(T / dt, 1);
 w2 = ((7*3^(1/2)*31^(1/2))/30 + 1/10) * ones(T / dt, 1);
 w3 = (1/10 - (7*3^(1/2)*31^(1/2))/30) * ones(T / dt, 1);
-[pose, theta] = simulateRobotVec([w1], [w2], [w3], dt, false);
+[pose, theta] = simulateRobotVec([w1], [w2], [w3], dt, true);
 
 figure('Name','Question 2 c)');
 subplot(2,1,1)       % add first plot in 2 x 1 grid
@@ -76,11 +76,12 @@ title('Question 2 c) Position State')
 subplot(2,1,2)       % add second plot in 2 x 1 grid
 plot(theta);
 title('Question 2 c) Theta State')
-% d) Sprial
+%% d) Sprial
 w1 = 1 * ones(T / dt, 1);
 t = linspace(0,T / 6, T / dt);
-w2 = (t./2 + (-(15625*(4.*t + 5).*(4.*t - 11))/749956).^(1/2)/2 - 1/8) ./ 0.25;
-w3 = (t./2 - (-(15625*(4.*t + 5).*(4.*t - 11))/749956).^(1/2)/2 - 1/8) ./ 0.25;
+% w2 = (t./2 + (-(15625*(4.*t + 5).*(4.*t - 11))/749956).^(1/2)/2 - 1/8) ./ 0.25;
+% w3 = (t./2 - (-(15625*(4.*t + 5).*(4.*t - 11))/749956).^(1/2)/2 - 1/8) ./ 0.25;
+
 [pose, theta] = simulateRobotVec([w1], [w2], [w3], dt, true);
 
 figure('Name','Question 2 d)');

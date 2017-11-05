@@ -70,7 +70,7 @@ for t=2:length(T)
     %
     % Current speeds.
     v = v1+v2+v3;
-    w = cross(l1,v1)/norm(l1) + cross(l2,v2)/norm(l2) +cross(l3,v3)/norm(l3);
+    w = cross(l1,v1)/(norm(l1)^2) + cross(l2,v2)/(norm(l2)^2) +cross(l3,v3)/(norm(l3)^2);
     %
     % Calculate the rotation.
     dtheta =  w(3) * dt;
