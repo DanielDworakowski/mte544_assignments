@@ -3,13 +3,11 @@ function [ positions_state, thetas_state, pos_gps, thetas_mag ] = simulateRobotV
 r = 0.25;
 l = 0.3;
 
-v1_hat = [0,1,0];
-v2_hat = [-sqrt(3)/2,(-1)/2,0];
-v3_hat = [sqrt((3))/2,(-1)/2,0];
-
-l1 = [1,0,0]*l;
-l2 = [(-1)/2,sqrt((3))/2,0]*l;
-l3 = [(-1)/2,-sqrt((3))/2,0]*l;
+x_g = zeros(3,3);
+x_g(1,:) = [0, 1, l];
+x_g(2,:) = [-sqrt(3)/2, (-1)/2, l];
+x_g(3,:) = [sqrt((3))/2, (-1)/2, l];
+x_r = inv(x_g);
 
 position = [0;0;0];
 theta = 0;
@@ -24,23 +22,17 @@ pos_gps = [];
 thetas_mag = [];
 
 for index = 1:numel(w1)
-  
-  v1 = v1_hat*w1(index)*r;
-  v2 = v2_hat*w2(index)*r;
-  v3 = v3_hat*w3(index)*r;
+  w = r * [w1(index); w2(index); w3(index)];
   %
   % Current speeds.
-  v = v1+v2+v3;
-  w = cross(l1,v1)/(norm(l1)^2) + cross(l2,v2)/(norm(l2)^2) +cross(l3,v3)/(norm(l3)^2);
-
+  v = x_r * w;
   %
   % Simulate the motion.
   rotation_m = [cos(theta),-sin(theta),0;sin(theta),cos(theta),0;0,0,(1)];
-  position = position + (rotation_m*v') * dT;
-  
+  position = position + (rotation_m*v) * dT;
   %
   % Calculate the rotation. 
-  theta = theta + w(3) * dT;
+  theta = theta + v(3) * dT;
   if noise
     theta = normrnd(theta,(0.1*pi/180));
   end

@@ -132,7 +132,7 @@ for t=2:length(T)
     error_ellipse(S_pos,mu_pos,0.95);
     title('True state and belief')
     axis equal
-    axis([-1 5 -3 1.5])
+    axis([-0.2 1.5 -1 1.5/2])
     if (makemovie) writeVideo(vidObj, getframe(gca)); end
 
 end
