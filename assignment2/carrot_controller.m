@@ -1,6 +1,6 @@
 function [ v, delta, done ] = carrot_controller(start, goal, pose)
 r = 0.5;
-k = 0.5;
+k = 0.25;
 tol = 0.02;
 done = 0;
 

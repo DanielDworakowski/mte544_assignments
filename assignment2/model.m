@@ -104,12 +104,13 @@ for i=1:length(sp)-1
   while ~done
     [ v, delta, done ] = carrot_controller(start_m, goal_m, pose);
     pose = motionModel(v, delta, pose, false);
-    plot(pose(1) / res, pose(2) / res, '-s')
     poses = [poses; pose];
   end
   i
 end
-plotState(poses,false, "wut");
+display('DONE');
+plot(poses(:,1) ./ res, poses(:,2) ./ res);
+hold off;
 
 function [] = plotState(X, newFig, name)
   if (newFig)
