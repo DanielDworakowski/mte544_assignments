@@ -94,14 +94,18 @@ toc;
 pose = start.*res;
 poses = [];
 
-for i=1:length(milestones)-1
-  start_m = [milestones(i,1), milestones(i,2)] .* res;
-  goal_m = [milestones(i+1,1), milestones(i+1,2)] .* res;
+length(sp)
+for i=1:length(sp)-1
+  x = milestones(sp(i:i+1),1);
+  y = milestones(sp(i:i+1),2);
+  start_m = [x(1) y(1)].* res;
+  goal_m = [x(2) y(2)].* res;
   done = 0;
   while ~done
     [ v, delta, done ] = carrot_controller(start_m, goal_m, pose);
-    pose = motionModel(v, delta, pose);
-    poses = [poses pose];
+    pose = motionModel(v, delta, pose, false);
+    plot(pose(1) / res, pose(2) / res, '-s')
+    poses = [poses; pose];
   end
   i
 end
@@ -118,7 +122,7 @@ function [] = plotState(X, newFig, name)
   saveas(gcf, strcat(name,'.png'));
 end
 
-function [X] = motionModel(vel, delta, init)
+function [X] = motionModel(vel, delta, init, noise)
   wb = 0.3;
   dt = 0.1;
   sigma = zeros(3,3);
