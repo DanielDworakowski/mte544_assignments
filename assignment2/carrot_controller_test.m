@@ -2,7 +2,7 @@ clear all;
 clc;
 close all;
 
-start = [-5,2];
-goal = [1,3];
-pose = [1,4,0.2];
+start = [76.6000   65.9000];
+goal = [14.8000   38.3000];
+pose = [78.4103   65.5023    0.5562];
 [v, delta] = carrot_controller(start, goal, pose);

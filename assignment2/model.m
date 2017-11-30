@@ -91,17 +91,19 @@ end
 disp('Time to find shortest path');
 toc;
 
-pose = start;
+pose = start.*res;
 poses = [];
+
 for i=1:length(milestones)-1
-  start_m = [milestones(i,1), milestones(i,2)];
-  goal_m = [milestones(i+1,1), milestones(i+1,2)];
+  start_m = [milestones(i,1), milestones(i,2)] .* res;
+  goal_m = [milestones(i+1,1), milestones(i+1,2)] .* res;
   done = 0;
   while ~done
     [ v, delta, done ] = carrot_controller(start_m, goal_m, pose);
     pose = motionModel(v, delta, pose);
     poses = [poses pose];
   end
+  i
 end
 plotState(poses,false, "wut");
 
@@ -158,6 +160,7 @@ function [X] = motionModel(vel, delta, init)
     vel_global(3) = omega;
     dX = vel_global .* dt;
     X(index, :) = prevState + dX.';
+    X(index,3) = mod(X(index,3) + pi,2*pi)-pi;
     prevState = X(index, :);
   end
 
@@ -186,7 +189,6 @@ function [map, start, goal, res, xMax, yMax] = getMap(plot)
     axis equal
   end
 end
-
 % 
 % From MTE544 git.
 function [x y]=bresenham(x1,y1,x2,y2)

@@ -1,6 +1,6 @@
 function [ v, delta, done ] = carrot_controller(start, goal, pose)
-r = 1;
-k = 1;
+r = 0.5;
+k = 0.05;
 tol = 0.02;
 done = 0;
 
@@ -21,17 +21,26 @@ rv = pc + e*r;
 
 s = rv - p;
 
-delta = theta + atan2(s(2),s(1));
-delta = min(max(deg2rad(-30),delta),deg2rad(30));
+delta = (atan2(s(2),s(1)) - theta);
 v=k*norm(s);
+% dif = p1-p0;
+% if abs(theta - atan(dif(2)/dif(1))) > deg2rad(80)
+%   delta = deg2rad(30);
+%   v=0.001;
+% end
+% if delta < deg2rad(-30)
+%   delta = deg2rad(-30);
+%   v=0.001;
+% end
 if(norm(p-p1) < tol)
   done = 1;
 end
 % disp(["velocity: ", num2str(v), "   delta: ", num2str(delta), "    done: ", num2str(done)]);
-
-sz = 200;
+% pose
+% sz = 20;
+% figure
 % hold
-% axis([-5, 5, -5, 5]);
+% axis([-100, 100, -100, 100]);
 % scatter(p0(1),p0(2), sz,1,'filled');
 % text(p0(1)-0.1,p0(2)-0.1, 'p0');
 % 
@@ -58,5 +67,6 @@ sz = 200;
 % 
 % scatter(0,0, sz,4,'filled');
 % text(-0.1,-0.1, 'O');
+
 end
 
