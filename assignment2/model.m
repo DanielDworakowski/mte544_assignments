@@ -6,7 +6,7 @@ ts = 0:dt:T;
 init = zeros(3,1);
 v = ones(1, T/dt + 1) * 3;
 delta = (10 - ts) .* pi / 180.;
-X = motionModel(v, delta, nan);
+X = motionModel(v, delta, nan, true);
 plotState(X, true, 'q1MotModel');
 %% Question 3.
 clear
@@ -69,6 +69,8 @@ for i = 1:nM
        if (~isCollided)
          e(i, cur) = 1;
          e(cur, i) = 1;
+         plot([milestones(i,1) milestones(cur,1)],[milestones(i,2) milestones(cur,2)],'m');
+
        end
        
 %       if (~CheckCollision(milestones(i,:),milestones(cur,:), obsEdges))
@@ -79,6 +81,7 @@ for i = 1:nM
     end
   end
 end
+
 disp('Time to connect roadmap');
 toc;
 
@@ -90,7 +93,7 @@ for i=1:length(sp)-1
 end
 disp('Time to find shortest path');
 toc;
-
+%
 pose = start.*res;
 poses = [];
 
@@ -164,9 +167,15 @@ function [X] = motionModel(vel, delta, init, noise)
     vel_global(1:2) = R * vel_local(1:2);
     vel_global(3) = omega;
     dX = vel_global .* dt;
+    if noise
+      dX(1) = normrnd(dX(1),0.01^2);
+      dX(2) = normrnd(dX(2),0.01^2);
+      dX(3) = normrnd(dX(3), (pi / 180)^2);
+    end
     X(index, :) = prevState + dX.';
     X(index,3) = mod(X(index,3) + pi,2*pi)-pi;
     prevState = X(index, :);
+    
   end
 
 end
