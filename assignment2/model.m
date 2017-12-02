@@ -169,7 +169,7 @@ function [X] = motionModel(vel, delta, init, noise)
       vel_global(3) = omega;
       dX = vel_global .* dt;
       dX = prevState + dX.';
-      dX(3) = mod(theta + dTheta, 2*pi);
+      dX(3) = mod(dX(3), 2*pi);
     else
       dTheta = c * dt * v_cmd;
       r = 1 / c;
