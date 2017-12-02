@@ -165,6 +165,7 @@ function [X] = motionModel(vel, delta, init, noise)
     if (abs(c) < 0.0001)
       disp('straight')
       R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+      vel_local(1) = v_cmd;
       vel_global(1:2) = R * vel_local(1:2);
       vel_global(3) = omega;
       dX = vel_global .* dt;
