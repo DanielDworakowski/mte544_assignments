@@ -123,6 +123,7 @@ function [] = plotState(X, newFig, name)
   title('State x vs y position');
   ylabel('y (m)');
   xlabel('x (m)');
+  axis equal
   saveas(gcf, strcat(name,'.png'));
 end
 
