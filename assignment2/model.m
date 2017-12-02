@@ -100,7 +100,7 @@ for i=1:length(sp)-1
   end
   i
 end
-display('DONE');
+disp('DONE');
 plot(poses(:,1) ./ res, poses(:,2) ./ res);
 hold off;
 
@@ -162,15 +162,15 @@ function [X] = motionModel(vel, delta, init, noise)
     theta = prevState(3); 
     %
     % 
-    if (abs(c) < 0.0001)
-      disp('straight')
+    if (abs(c) < 0.001)
+%       disp('straight')
       R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
       vel_local(1) = v_cmd;
       vel_global(1:2) = R * vel_local(1:2);
       vel_global(3) = omega;
       dX = vel_global .* dt;
       dX = prevState + dX.';
-      dX(3) = mod(dX(3), 2*pi);
+      dX(3) = mod(dX(3) + pi,2*pi)-pi;
     else
       dTheta = c * dt * v_cmd;
       r = 1 / c;
@@ -178,7 +178,7 @@ function [X] = motionModel(vel, delta, init, noise)
       y_rot = prevState(2) + r * cos(theta);
       dX(1) = x_rot + r * sin(dTheta + theta);
       dX(2) = y_rot - r * cos(dTheta + theta);
-      dX(3) = mod(theta + dTheta, 2*pi);
+      dX(3) = mod(theta + dTheta + pi,2*pi)-pi;
     end
     if noise
       dX(1) = normrnd(dX(1),0.01^2);
