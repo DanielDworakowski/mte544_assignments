@@ -1,19 +1,8 @@
 clc; clear; close all;
-%%Question 1.
-T = 20;
-dt = 0.1;
-ts = 0:dt:T;
-init = zeros(3,1);
-v = ones(1, T/dt + 1) * 3;
-delta = (10 - ts) .* pi / 180.;
-X = motionModel(v, delta, nan, true);
-plotState(X, true, 'q1MotModel');
+
 %% Question 3.
 clear
 [map, start, goal, res, xMax, yMax] = getMap(false);
-
-
-
 
 tic;
 
@@ -115,6 +104,17 @@ display('DONE');
 plot(poses(:,1) ./ res, poses(:,2) ./ res);
 hold off;
 
+%% Question 1.
+T = 20;
+dt = 0.1;
+ts = 0:dt:T;
+init = zeros(3,1);
+v = ones(1, T/dt + 1) * 3;
+delta = (10 - ts) .* pi / 180.;
+X = motionModel(v, delta, nan, true);
+plotState(X, true, 'q1MotModel');
+
+%
 function [] = plotState(X, newFig, name)
   if (newFig)
     figure;
@@ -129,16 +129,14 @@ end
 function [X] = motionModel(vel, delta, init, noise)
   wb = 0.3;
   dt = 0.1;
-  sigma = zeros(3,3);
-  sigma(1,1) = 0.02;
-  sigma(2,2) = 0.02;
-  sigma(3,3) = 1 * pi / 180.0;
   d_limit = 30 * pi / 180.0;
   %   
   %   Motion modeling.
   X = zeros(size(vel,2),3);
   vel_local = zeros(3,1);
   vel_global = zeros(3,1);
+  dX = zeros(3,1);
+
   if isnan(init)
     init = zeros(1,3);
   end
@@ -156,24 +154,36 @@ function [X] = motionModel(vel, delta, init, noise)
     % Robot motion dt
     v_cmd = vel(index);
     d_cmd = delta(index);
-    c = tan(d_cmd)/ wb;
+    c = tan(d_cmd) / wb;
     omega = v_cmd * c;
-    vel_local(1) = v_cmd;
-    vel_local(3) = omega;
     % 
     % Global motion.
     theta = prevState(3); 
-    R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
-    vel_global(1:2) = R * vel_local(1:2);
-    vel_global(3) = omega;
-    dX = vel_global .* dt;
+    %
+    % 
+    if (abs(c) < 0.0001)
+      disp('straight')
+      R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+      vel_global(1:2) = R * vel_local(1:2);
+      vel_global(3) = omega;
+      dX = vel_global .* dt;
+      dX = prevState + dX.';
+      dX(3) = mod(theta + dTheta, 2*pi);
+    else
+      dTheta = c * dt * v_cmd;
+      r = 1 / c;
+      x_rot = prevState(1) - r * sin(theta);
+      y_rot = prevState(2) + r * cos(theta);
+      dX(1) = x_rot + r * sin(dTheta + theta);
+      dX(2) = y_rot - r * cos(dTheta + theta);
+      dX(3) = mod(theta + dTheta, 2*pi);
+    end
     if noise
       dX(1) = normrnd(dX(1),0.01^2);
       dX(2) = normrnd(dX(2),0.01^2);
       dX(3) = normrnd(dX(3), (pi / 180)^2);
     end
-    X(index, :) = prevState + dX.';
-    X(index,3) = mod(X(index,3) + pi,2*pi)-pi;
+    X(index, :) = dX;
     prevState = X(index, :);
     
   end
